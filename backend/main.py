@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, UploadFile, Form
+from fastapi import Depends, FastAPI, File, HTTPException, Header, UploadFile, Form
 from fastapi.middleware.cors import CORSMiddleware
 
 from finance.enum.month import Month
@@ -17,9 +17,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+def get_current_user(authorization: str = Header(...)):
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Invalid auth header")
+    token = authorization.replace("Bearer ", "")
+    return verify_google_token(token)
 
 @app.post("/upload-csv/")
-async def upload_csv(file: UploadFile = File(...)):
+async def upload_csv(file: UploadFile = File(...), user=Depends(get_current_user)):
     try:
         sheet_controller.upload_csv(file)
         return {"status": "CSV file uploaded successfully."}
@@ -27,7 +32,7 @@ async def upload_csv(file: UploadFile = File(...)):
         return {"error": str(e)}
 
 @app.get("/data/{month}")
-async def get_data(month: str):
+async def get_data(month: str, user=Depends(get_current_user)):
     try:
         if not Month.is_valid(month):
             return {"error": "Invalid month provided."}
@@ -38,10 +43,10 @@ async def get_data(month: str):
     except Exception as e:
         return {"error": str(e)}
 
-@app.post("/categorize/")
+@app.post("/categorize/", user=Depends(get_current_user))
 async def categorize(uuid: str = Form(...), category: str = Form(...)):
     pass
 
-@app.get("/categories/")
+@app.get("/categories/", user=Depends(get_current_user))
 async def categories():
     pass
