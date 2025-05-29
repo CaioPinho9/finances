@@ -1,8 +1,6 @@
 fastapi
 uvicorn
 gspread
-oauth2client
 pandas
-python-multipart
-google-auth
-python-dotenv
+sqlalchemy
+pydantic-sqlalchemy

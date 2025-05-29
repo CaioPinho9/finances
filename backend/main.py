@@ -1,12 +1,17 @@
-from fastapi import Depends, FastAPI, File, HTTPException, Header, UploadFile, Form
+from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
-from finance.enum.month import Month
-from finance.google_sheet_service import GoogleSheetService
-from finance.sheet_controller import SheetController
+from finance.historic.database.sqlalchemy import engine, SessionLocal
+from finance.historic.model.historic import Base
+from finance.historic.schemas.schemas import HistoricUserless
+from finance.historic.service.historic_service import HistoricService
+from finance.historic_controller import HistoricController
 
-sheet_service = GoogleSheetService()
-sheet_controller = SheetController(sheet_service)
+Base.metadata.create_all(bind=engine)
+db = SessionLocal()
+
+historic_service = HistoricService(db, engine)
+historic_controller = HistoricController(historic_service)
 app = FastAPI()
 
 app.add_middleware(
@@ -17,36 +22,29 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-def get_current_user(authorization: str = Header(...)):
-    if not authorization.startswith("Bearer "):
-        raise HTTPException(status_code=401, detail="Invalid auth header")
-    token = authorization.replace("Bearer ", "")
-    return verify_google_token(token)
 
-@app.post("/upload-csv/")
-async def upload_csv(file: UploadFile = File(...), user=Depends(get_current_user)):
+@app.post("/api/historic")
+async def save_historic(file: UploadFile = File(...)):
     try:
-        sheet_controller.upload_csv(file)
+        content = await file.read()
+        historic_controller.save_historic(content)
         return {"status": "CSV file uploaded successfully."}
     except Exception as e:
         return {"error": str(e)}
 
-@app.get("/data/{month}")
-async def get_data(month: str, user=Depends(get_current_user)):
+
+@app.get("/api/historic/date/{date}")
+async def get_data(date: str):
     try:
-        if not Month.is_valid(month):
-            return {"error": "Invalid month provided."}
-        data = sheet_controller.get_month_data(month)
-        if data.empty:
-            return {"error": "No data found for the specified month."}
-        return data
+        return historic_controller.get_by_date(date)
     except Exception as e:
         return {"error": str(e)}
 
-@app.post("/categorize/", user=Depends(get_current_user))
-async def categorize(uuid: str = Form(...), category: str = Form(...)):
-    pass
-
-@app.get("/categories/", user=Depends(get_current_user))
-async def categories():
-    pass
+@app.put("/api/historic")
+async def update_historic(historic: HistoricUserless):
+    try:
+        # Assuming the update method is implemented in HistoricService
+        historic_controller.update(historic)
+        return {"status": "Historic entry updated successfully."}
+    except Exception as e:
+        return {"error": str(e)}
