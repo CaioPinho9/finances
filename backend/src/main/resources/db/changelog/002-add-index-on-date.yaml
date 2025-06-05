@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 002
+      author: dev
+      changes:
+        - createIndex:
+            indexName: idx_date
+            tableName: tb_historic
+            columns:
+              - column:
+                  name: date

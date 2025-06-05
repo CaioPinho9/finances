@@ -1,0 +1,28 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001
+      author: dev
+      changes:
+        - createTable:
+            tableName: tb_historic
+            columns:
+              - column:
+                  name: uuid
+                  type: VARCHAR(255)
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: date
+                  type: DATE
+              - column:
+                  name: user
+                  type: INTEGER
+              - column:
+                  name: amount
+                  type: FLOAT
+              - column:
+                  name: description_bank
+                  type: VARCHAR(255)
+              - column:
+                  name: description_custom
+                  type: VARCHAR(255)
