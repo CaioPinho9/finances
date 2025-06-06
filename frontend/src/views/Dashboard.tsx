@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import TableView from "../components/TableView";
 import DateSelector from "../components/DateSelector";
 import UploadModal from "../components/UploadModal";
-import { getHistoricByDate, HistoricEntry } from "../api/historic";
+import { getHistoricByDate, HistoricDto } from "../api/historic";
 
 export default function Dashboard() {
   const now = new Date();
@@ -11,7 +11,7 @@ export default function Dashboard() {
     if (cached) {
       try {
         return JSON.parse(cached);
-      } catch {}
+      } catch { }
     }
     return { month: now.getMonth() + 1, year: now.getFullYear() };
   });
@@ -20,11 +20,11 @@ export default function Dashboard() {
     setSelectedDateState(date);
     localStorage.setItem("dashboard-selected-date", JSON.stringify(date));
   };
-  const [historicData, setHistoricData] = useState<HistoricEntry[]>([]);
+  const [historicData, setHistoricData] = useState<HistoricDto[]>([]);
   const [showModal, setShowModal] = useState(false);
 
-  const [incomeData, setIncomeData] = useState<HistoricEntry[]>([]);
-  const [expenseData, setExpenseData] = useState<HistoricEntry[]>([]);
+  const [incomeData, setIncomeData] = useState<HistoricDto[]>([]);
+  const [expenseData, setExpenseData] = useState<HistoricDto[]>([]);
 
   const fetchData = useCallback(async () => {
     const monthStr = `${selectedDate.month}`.padStart(2, "0");

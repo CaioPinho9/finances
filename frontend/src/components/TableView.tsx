@@ -1,36 +1,36 @@
 import { useState } from "react";
-import { HistoricColumns, HistoricEntry, updateHistoric } from "../api/historic";
+import { HistoricColumns, HistoricDto, updateHistoric } from "../api/historic";
 
 interface Props {
-    data: HistoricEntry[];
-    setData: React.Dispatch<React.SetStateAction<HistoricEntry[]>>;
+    data: HistoricDto[];
+    setData: React.Dispatch<React.SetStateAction<HistoricDto[]>>;
 }
 
-type SortKey = keyof HistoricEntry;
+type SortKey = keyof HistoricDto;
 type SortDirection = "asc" | "desc";
 
 export default function TableView({ data, setData }: Props) {
-    const [editing, setEditing] = useState<Record<string, Partial<HistoricEntry>>>({});
+    const [editing, setEditing] = useState<Record<string, Partial<HistoricDto>>>({});
     const [sortKey, setSortKey] = useState<SortKey | null>(null);
     const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
 
     console.log(data);
 
 
-    const handleChange = (uuid: string, field: keyof HistoricEntry, value: any) => {
+    const handleChange = (uuid: string, field: keyof HistoricDto, value: any) => {
         setEditing((prev) => ({
             ...prev,
             [uuid]: { ...prev[uuid], [field]: value },
         }));
     };
 
-    const handleBlur = (uuid: string, field: keyof HistoricEntry) => {
+    const handleBlur = (uuid: string, field: keyof HistoricDto) => {
         const value = editing[uuid]?.[field];
         if (value !== undefined) {
             updateHistoric({ uuid, [field]: value });
 
-            setData((prevData: HistoricEntry[]) =>
-                prevData.map((entry: HistoricEntry) =>
+            setData((prevData: HistoricDto[]) =>
+                prevData.map((entry: HistoricDto) =>
                     entry.uuid === uuid ? { ...entry, [field]: value } : entry
                 )
             );

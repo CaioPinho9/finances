@@ -1,6 +1,6 @@
 const API_BASE_URL = "http://localhost:8000/api/historic";
 
-export interface HistoricEntry {
+export interface HistoricDto {
   uuid: string;
   date: string;
   user: number;
@@ -31,7 +31,7 @@ export async function createHistoric(file: FormData): Promise<any> {
 
 export async function getHistoricByDate(
   date: string
-): Promise<HistoricEntry[]> {
+): Promise<HistoricDto[]> {
   const response = await fetch(`${API_BASE_URL}/date/${date}`);
   if (!response.ok) throw new Error("Failed to fetch historic by date");
 
@@ -45,8 +45,8 @@ export async function getHistoricByDate(
 }
 
 export async function updateHistoric(
-  data: Partial<HistoricEntry>
-): Promise<HistoricEntry> {
+  data: Partial<HistoricDto>
+): Promise<HistoricDto> {
   const response = await fetch(`${API_BASE_URL}`, {
     method: "PUT",
     headers: {
