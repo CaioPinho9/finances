@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:8000/api/historic";
+const API_BASE_URL = "http://localhost:8080/api/historic";
 
 export interface HistoricDto {
   uuid: string;

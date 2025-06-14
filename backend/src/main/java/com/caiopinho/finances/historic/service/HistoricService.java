@@ -1,5 +1,6 @@
 package com.caiopinho.finances.historic.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,11 +13,15 @@ import com.caiopinho.finances.historic.model.Historic;
 import com.caiopinho.finances.historic.repository.HistoricRepository;
 
 @Service
-@AllArgsConstructor
 public class HistoricService {
-
 	private final HistoricRepository repository;
 	private final HistoricMonthQuery historicMonthQuery;
+
+	@Autowired
+	public HistoricService(HistoricRepository repository, HistoricMonthQuery historicMonthQuery) {
+		this.repository = repository;
+		this.historicMonthQuery = historicMonthQuery;
+	}
 
 	public Historic save(Historic historic) {
 		return repository.save(historic);

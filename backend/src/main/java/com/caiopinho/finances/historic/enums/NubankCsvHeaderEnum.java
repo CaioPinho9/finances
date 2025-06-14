@@ -1,4 +1,4 @@
-package com.caiopinho.finances.parser.enums;
+package com.caiopinho.finances.historic.enums;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;

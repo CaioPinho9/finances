@@ -1,4 +1,6 @@
-package com.caiopinho.finances.parser;
+package com.caiopinho.finances.historic.converter;
+
+import static com.caiopinho.finances.historic.enums.BankMessages.MSG_FATURA;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,18 +10,19 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.caiopinho.finances.parser.enums.NubankCsvHeaderEnum;
+import com.caiopinho.finances.historic.enums.NubankCsvHeaderEnum;
 import com.caiopinho.finances.historic.model.Historic;
 import com.opencsv.CSVReaderBuilder;
 
 @Service
-public class CsvParser {
+public class CsvConverter {
 
-	public List<Historic> parseNubank(MultipartFile file) throws IOException {
+	private List<Historic> convertNubankCsv(MultipartFile file) throws IOException {
 		try (
 				var reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
 				var csvReader = new CSVReaderBuilder(reader).build()
@@ -69,5 +72,16 @@ public class CsvParser {
 		} catch (Exception e) {
 			throw new IOException("Failed to parse CSV: " + e.getMessage(), e);
 		}
+	}
+
+	public List<Historic> convertCsvToHistoric(MultipartFile file) throws IOException {
+		List<Historic> entries = convertNubankCsv(file);
+
+		entries = entries.stream()
+				.filter(entry -> entry.getUuid() != null && !entry.getUuid().isBlank())
+				.filter(entry -> !Objects.equals(entry.getDescriptionBank(), MSG_FATURA.getMessage()))
+				.toList();
+
+		return entries;
 	}
 }
