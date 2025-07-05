@@ -1,0 +1,28 @@
+databaseChangeLog:
+  - changeSet:
+      id: 003-create-transaction-template-table
+      author: caiopinho
+      changes:
+        - createTable:
+            tableName: tb_transaction_template
+            columns:
+              - column:
+                  name: co_seq_transaction_template
+                  type: VARCHAR(255)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: ds_description
+                  type: VARCHAR(255)
+              - column:
+                  name: co_category
+                  type: TINYINT
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: tb_transaction_template
+            baseColumnNames: co_category
+            referencedTableName: tb_category
+            referencedColumnNames: co_seq_category
+            constraintName: fk_template_category

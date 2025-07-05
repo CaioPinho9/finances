@@ -1,0 +1,96 @@
+databaseChangeLog:
+  - changeSet:
+      id: 004-insert-default-categories
+      author: caiopinho
+      changes:
+        - insert:
+            tableName: tb_category
+            columns:
+              - column: { name: no_name, value: "Alimentação" }
+              - column: { name: ds_description, value: "Despesas com comida, restaurantes, mercado, etc." }
+              - column: { name: st_expense, valueBoolean: true }
+        - insert:
+            tableName: tb_category
+            columns:
+              - column: { name: no_name, value: "Presentes" }
+              - column: { name: ds_description, value: "Gastos com presentes e doações." }
+              - column: { name: st_expense, valueBoolean: true }
+        - insert:
+            tableName: tb_category
+            columns:
+              - column: { name: no_name, value: "Saúde" }
+              - column: { name: ds_description, value: "Gastos com plano de saúde, farmácia, consultas, etc." }
+              - column: { name: st_expense, valueBoolean: true }
+        - insert:
+            tableName: tb_category
+            columns:
+              - column: { name: no_name, value: "Moradia" }
+              - column: { name: ds_description, value: "Aluguel, contas de luz, água, condomínio e afins." }
+              - column: { name: st_expense, valueBoolean: true }
+        - insert:
+            tableName: tb_category
+            columns:
+              - column: { name: no_name, value: "Transporte" }
+              - column: { name: ds_description, value: "Combustível, passagens, manutenção e transporte público." }
+              - column: { name: st_expense, valueBoolean: true }
+        - insert:
+            tableName: tb_category
+            columns:
+              - column: { name: no_name, value: "Pessoal" }
+              - column: { name: ds_description, value: "Gastos pessoais como roupas, beleza, educação, etc." }
+              - column: { name: st_expense, valueBoolean: true }
+        - insert:
+            tableName: tb_category
+            columns:
+              - column: { name: no_name, value: "Viagens" }
+              - column: { name: ds_description, value: "Passagens, hospedagem, passeios, e outros custos de viagem." }
+              - column: { name: st_expense, valueBoolean: true }
+        - insert:
+            tableName: tb_category
+            columns:
+              - column: { name: no_name, value: "Setup" }
+              - column: { name: ds_description, value: "Gastos com equipamentos, eletrônicos e tecnologia." }
+              - column: { name: st_expense, valueBoolean: true }
+        - insert:
+            tableName: tb_category
+            columns:
+              - column: { name: no_name, value: "Outros" }
+              - column: { name: ds_description, value: "Outras despesas não categorizadas." }
+              - column: { name: st_expense, valueBoolean: true }
+        
+        - insert:
+            tableName: tb_category
+            columns:
+              - column: { name: no_name, value: "Poupança" }
+              - column: { name: ds_description, value: "Transferências para contas de poupança ou investimentos." }
+              - column: { name: st_expense, valueBoolean: false }
+        - insert:
+            tableName: tb_category
+            columns:
+              - column: { name: no_name, value: "Pagamento" }
+              - column: { name: ds_description, value: "Recebimentos de salários, serviços, etc." }
+              - column: { name: st_expense, valueBoolean: false }
+        - insert:
+            tableName: tb_category
+            columns:
+              - column: { name: no_name, value: "Bônus" }
+              - column: { name: ds_description, value: "Ganhos extras como comissões e gratificações." }
+              - column: { name: st_expense, valueBoolean: false }
+        - insert:
+            tableName: tb_category
+            columns:
+              - column: { name: no_name, value: "Juros" }
+              - column: { name: ds_description, value: "Recebimento de juros sobre investimentos ou aplicações." }
+              - column: { name: st_expense, valueBoolean: false }
+        - insert:
+            tableName: tb_category
+            columns:
+              - column: { name: no_name, value: "Outros" }
+              - column: { name: ds_description, value: "Outras receitas não categorizadas." }
+              - column: { name: st_expense, valueBoolean: false }
+        - insert:
+            tableName: tb_category
+            columns:
+              - column: { name: no_name, value: "Categoria personalizada" }
+              - column: { name: ds_description, value: "Categoria de receita criada pelo usuário." }
+              - column: { name: st_expense, valueBoolean: false }

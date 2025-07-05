@@ -1,0 +1,28 @@
+databaseChangeLog:
+  - changeSet:
+      id: 005-gen-uuid-transaction-postgresql
+      author: caiopinho
+      preConditions:
+        onFail: MARK_RAN
+        preConditions:
+          - dbms:
+              type: postgresql
+      changes:
+        - addDefaultValue:
+            tableName: tb_transaction
+            columnName: co_seq_transaction
+            defaultValueComputed: gen_random_uuid()
+  
+  - changeSet:
+      id: 005-gen-uuid-transaction-h2
+      author: caiopinho
+      preConditions:
+        onFail: MARK_RAN
+        preConditions:
+          - dbms:
+              type: h2
+      changes:
+        - addDefaultValue:
+            tableName: tb_transaction
+            columnName: co_seq_transaction
+            defaultValueComputed: RANDOM_UUID()

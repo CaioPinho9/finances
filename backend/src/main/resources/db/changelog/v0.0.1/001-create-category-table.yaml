@@ -1,0 +1,28 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-category-table
+      author: your_name
+      changes:
+        - createTable:
+            tableName: tb_category
+            columns:
+              - column:
+                  name: co_seq_category
+                  type: TINYINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: no_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: ds_description
+                  type: VARCHAR(255)
+              - column:
+                  name: st_expense
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false

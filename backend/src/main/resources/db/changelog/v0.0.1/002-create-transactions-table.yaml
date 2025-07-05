@@ -1,0 +1,53 @@
+databaseChangeLog:
+  - changeSet:
+      id: 002-create-transaction-table
+      author: caiopinho
+      changes:
+        - createTable:
+            tableName: tb_transaction
+            columns:
+              - column:
+                  name: co_seq_transaction
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: nu_amount
+                  type: DECIMAL(12, 2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: dt_date
+                  type: DATE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: no_title
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: ds_description
+                  type: VARCHAR(255)
+              - column:
+                  name: st_default
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: co_category
+                  type: BIGINT
+                  constraints:
+                    nullable: true
+              - column:
+                  name: co_user
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: tb_transaction
+            baseColumnNames: co_category
+            referencedTableName: tb_category
+            referencedColumnNames: co_seq_category
+            constraintName: fk_transaction_category
