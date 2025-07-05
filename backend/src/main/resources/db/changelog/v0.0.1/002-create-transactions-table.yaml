@@ -28,13 +28,14 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: nu_parcela_atual
+                  type: INTEGER
+              - column:
+                  name: nu_parcela_total
+                  type: INTEGER
+              - column:
                   name: ds_description
                   type: VARCHAR(255)
-              - column:
-                  name: st_default
-                  type: BOOLEAN
-                  constraints:
-                    nullable: false
               - column:
                   name: co_category
                   type: BIGINT

@@ -47,11 +47,14 @@ public class Transaction {
 	@Column(name = "no_title", nullable = false)
 	private String title;
 
+	@Column(name = "nu_parcela_atual")
+	private Integer parcelaAtual;
+
+	@Column(name = "nu_parcela_total")
+	private Integer parcelaTotal;
+
 	@Column(name = "ds_description")
 	private String description;
-
-	@Column(name = "st_default", nullable = false)
-	private Boolean isDefault;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "co_category")
@@ -64,8 +67,9 @@ public class Transaction {
 		this.amount = transactionDetails.getAmount();
 		this.date = transactionDetails.getDate();
 		this.title = transactionDetails.getTitle();
+		this.parcelaAtual = transactionDetails.getParcelaAtual();
+		this.parcelaTotal = transactionDetails.getParcelaTotal();
 		this.description = transactionDetails.getDescription();
-		this.isDefault = transactionDetails.getIsDefault();
 		this.category = transactionDetails.getCategory();
 		this.userId = transactionDetails.getUserId();
 	}

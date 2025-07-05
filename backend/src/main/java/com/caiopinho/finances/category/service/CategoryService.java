@@ -52,6 +52,4 @@ public class CategoryService {
 		categoryRepository.deleteById(id);
 	}
 
-	public void updateCategoriesForTransactions(List<Transaction> savedTransactions, Long userId) {
-	}
 }

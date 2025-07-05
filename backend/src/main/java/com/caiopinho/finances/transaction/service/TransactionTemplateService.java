@@ -48,6 +48,14 @@ public class TransactionTemplateService {
 		transactionTemplateRepository.deleteById(title);
 	}
 
-	public void updateTemplatesForTransactions(List<Transaction> savedTransactions, Long userId) {
+	public void updateTemplatesForTransactions(List<Transaction> savedTransactions) {
+		for (Transaction transaction : savedTransactions) {
+			Optional<TransactionTemplate> template = transactionTemplateRepository.findByTitle(transaction.getTitle());
+			if (template.isPresent()) {
+				TransactionTemplate transactionTemplate = template.get();
+				transaction.setDescription(transactionTemplate.getDescription());
+				transaction.setCategory(transactionTemplate.getCategory());
+			}
+		}
 	}
 }

@@ -24,12 +24,12 @@ public enum CsvType {
 			new String[]{"Pagamento de fatura"}
 	),
 	NUBANK_CREDIT_EXTRACT(
-			new String[]{"date", "amount", "title"},
+			new String[]{"date", "title", "amount"},
 			DateTimeFormatter.ofPattern("yyyy-MM-dd"),
 			Map.of(
 					"date", FIELD_DATE,
-					"amount", FIELD_AMOUNT,
-					"title", FIELD_TITLE
+					"title", FIELD_TITLE,
+					"amount", FIELD_AMOUNT
 			),
 			new String[]{"Pagamento recebido"}
 	);

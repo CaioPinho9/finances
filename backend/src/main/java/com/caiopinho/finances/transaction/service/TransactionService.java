@@ -6,7 +6,6 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.caiopinho.finances.category.service.CategoryService;
 import com.caiopinho.finances.transaction.model.Transaction;
 import com.caiopinho.finances.transaction.repository.TransactionRepository;
 
@@ -16,13 +15,11 @@ import jakarta.transaction.Transactional;
 public class TransactionService {
 	private final TransactionRepository transactionRepository;
 
-	private final CategoryService categoryService;
 	private final TransactionTemplateService templateService;
 
 	@Autowired
-	public TransactionService(TransactionRepository transactionRepository, CategoryService categoryService, TransactionTemplateService templateService) {
+	public TransactionService(TransactionRepository transactionRepository, TransactionTemplateService templateService) {
 		this.transactionRepository = transactionRepository;
-		this.categoryService = categoryService;
 		this.templateService = templateService;
 	}
 
@@ -31,15 +28,14 @@ public class TransactionService {
 	}
 
 	@Transactional
-	public List<Transaction> saveAll(List<Transaction> transactions, Long userId) {
+	public List<Transaction> saveAll(List<Transaction> transactions) {
 		List<Transaction> existingTransaction = transactions.stream()
 				.filter(tx -> !transactionRepository.existsById(tx.getId()))
 				.toList();
 
-		transactionRepository.saveAll(existingTransaction);
+		templateService.updateTemplatesForTransactions(transactions);
 
-		categoryService.updateCategoriesForTransactions(transactions, userId);
-		templateService.updateTemplatesForTransactions(transactions, userId);
+		transactionRepository.saveAll(existingTransaction);
 
 		return transactions;
 	}

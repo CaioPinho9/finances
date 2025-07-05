@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 import lombok.extern.slf4j.Slf4j;
@@ -60,6 +61,20 @@ public class CsvParserService {
 		BigDecimal amount = new BigDecimal(csvRecord.get(getKeyForModel("amount", mapping)));
 		String title = safeGet(csvRecord, getKeyForModel("title", mapping));
 		String idRaw = safeGet(csvRecord, getKeyForModel("id", mapping));
+		Integer parcelaAtual = null;
+		Integer parcelaTotal = null;
+
+		if (title != null && title.contains(" - Parcela")) {
+			String[] titleParts = title.split(" - Parcela");
+			title = titleParts[0].trim();
+			String[] parcelaParts = titleParts[1].split("/");
+			try {
+				parcelaAtual = Integer.parseInt(parcelaParts[0].trim());
+				parcelaTotal = Integer.parseInt(parcelaParts[1].trim());
+			} catch (NumberFormatException e) {
+				log.warn("Invalid parcela format in title: {}", title);
+			}
+		}
 
 		if (csvType.getBlacklistedTitles() != null && title != null && Arrays.asList(csvType.getBlacklistedTitles()).contains(title)) {
 			return null;
@@ -84,8 +99,9 @@ public class CsvParserService {
 				amount,
 				date,
 				title,
+				parcelaAtual,
+				parcelaTotal,
 				null,
-				false,
 				null,
 				userId
 		);
@@ -96,7 +112,7 @@ public class CsvParserService {
 				.filter(entry -> entry.getValue().equals(modelField))
 				.map(Map.Entry::getKey)
 				.findFirst()
-				.orElseThrow(() -> new IllegalArgumentException("Missing mapping for field: " + modelField));
+				.orElse(null);
 	}
 
 	private String safeGet(CSVRecord csvRecord, String column) {

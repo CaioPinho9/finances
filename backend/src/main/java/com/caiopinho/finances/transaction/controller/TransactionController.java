@@ -82,7 +82,7 @@ public class TransactionController {
 		}
 		try {
 			List<Transaction> transactions = csvParserService.parseCsv(file, userId, csvType);
-			List<Transaction> savedTransactions = transactionService.saveAll(transactions, userId);
+			List<Transaction> savedTransactions = transactionService.saveAll(transactions);
 			return new ResponseEntity<>(savedTransactions, HttpStatus.CREATED);
 		} catch (IOException | IllegalArgumentException e) {
 			err.println("Error during CSV upload: " + e.getMessage());
