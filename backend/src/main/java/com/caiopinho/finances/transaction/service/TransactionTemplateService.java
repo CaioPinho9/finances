@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.caiopinho.finances.transaction.model.Transaction;
 import com.caiopinho.finances.transaction.model.TransactionTemplate;
 import com.caiopinho.finances.transaction.repository.TransactionTemplateRepository;
 
@@ -45,5 +46,8 @@ public class TransactionTemplateService {
 			throw new RuntimeException("TransactionTemplate not found with title " + title);
 		}
 		transactionTemplateRepository.deleteById(title);
+	}
+
+	public void updateTemplatesForTransactions(List<Transaction> savedTransactions, Long userId) {
 	}
 }

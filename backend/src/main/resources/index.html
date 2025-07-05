@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Upload Transactions CSV</title>
+</head>
+<body>
+<h1>Upload CSV to /api/transactions/upload</h1>
+<form id="upload-form">
+    <label for="file">Select CSV file:</label>
+    <input type="file" id="file" name="file" required /><br><br>
+
+    <label for="userId">User ID:</label>
+    <input type="number" id="userId" name="userId" required /><br><br>
+
+    <label for="csvType">CSV Type:</label>
+    <select id="csvType" name="csvType" required>
+        <option value="NUBANK_EXTRACT">NUBANK_EXTRACT</option>
+        <option value="NUBANK_CREDIT_EXTRACT">NUBANK_CREDIT_EXTRACT</option>
+    </select><br><br>
+
+    <button type="submit">Upload</button>
+</form>
+
+<pre id="result"></pre>
+
+<script>
+    const form = document.getElementById("upload-form");
+    const result = document.getElementById("result");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const fileInput = document.getElementById("file");
+      const userId = document.getElementById("userId").value;
+      const csvType = document.getElementById("csvType").value;
+
+      if (!fileInput.files.length) {
+        alert("Please select a file.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("file", fileInput.files[0]);
+      formData.append("userId", userId);
+      formData.append("csvType", csvType);
+
+      try {
+        const response = await fetch("http://localhost:8080/api/transactions/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        const text = await response.text();
+        if (!response.ok) {
+          throw new Error(`Error ${response.status}: ${text}`);
+        }
+
+        result.textContent = "✅ Uploaded successfully:\n" + text;
+      } catch (err) {
+        result.textContent = "❌ Upload failed:\n" + err;
+      }
+    });
+</script>
+</body>
+</html>

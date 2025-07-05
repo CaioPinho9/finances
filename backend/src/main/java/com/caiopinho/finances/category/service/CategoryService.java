@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.caiopinho.finances.category.model.Category;
 import com.caiopinho.finances.category.repository.CategoryRepository;
+import com.caiopinho.finances.transaction.model.Transaction;
 
 @Service
 public class CategoryService {
@@ -25,6 +26,10 @@ public class CategoryService {
 
 	public Optional<Category> getById(Long id) {
 		return categoryRepository.findById(id);
+	}
+
+	public Optional<Category> getByName(String name) {
+		return categoryRepository.findByName(name);
 	}
 
 	public Category create(Category category) {
@@ -45,5 +50,8 @@ public class CategoryService {
 			throw new RuntimeException("Category not found with id " + id);
 		}
 		categoryRepository.deleteById(id);
+	}
+
+	public void updateCategoriesForTransactions(List<Transaction> savedTransactions, Long userId) {
 	}
 }

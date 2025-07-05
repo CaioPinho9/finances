@@ -13,8 +13,6 @@ import com.caiopinho.finances.category.model.Category;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -27,9 +25,17 @@ import jakarta.persistence.Table;
 @AllArgsConstructor
 public class Transaction {
 
+	public static final String FIELD_ID = "id";
+	public static final String FIELD_AMOUNT = "amount";
+	public static final String FIELD_DATE = "date";
+	public static final String FIELD_TITLE = "title";
+	public static final String FIELD_DESCRIPTION = "description";
+	public static final String FIELD_IS_DEFAULT = "isDefault";
+	public static final String FIELD_CATEGORY = "category";
+	public static final String FIELD_USER_ID = "userId";
+
 	@Id
 	@Column(name = "co_seq_transaction", nullable = false)
-	@GeneratedValue(strategy = GenerationType.UUID)
 	private UUID id;
 
 	@Column(name = "nu_amount", nullable = false)
@@ -53,4 +59,14 @@ public class Transaction {
 
 	@Column(name = "co_user", nullable = false)
 	private Long userId;
+
+	public void overrideWith(Transaction transactionDetails) {
+		this.amount = transactionDetails.getAmount();
+		this.date = transactionDetails.getDate();
+		this.title = transactionDetails.getTitle();
+		this.description = transactionDetails.getDescription();
+		this.isDefault = transactionDetails.getIsDefault();
+		this.category = transactionDetails.getCategory();
+		this.userId = transactionDetails.getUserId();
+	}
 }

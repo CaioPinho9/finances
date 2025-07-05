@@ -30,13 +30,13 @@ public class TransactionTemplateController {
 	}
 
 	@GetMapping
-	public ResponseEntity<List<TransactionTemplate>> getAllTransactionTemplates() {
+	public ResponseEntity<List<TransactionTemplate>> getAll() {
 		List<TransactionTemplate> transactionTemplates = transactionTemplateService.getAll();
 		return new ResponseEntity<>(transactionTemplates, HttpStatus.OK);
 	}
 
 	@GetMapping("/{title}")
-	public ResponseEntity<TransactionTemplate> getTransactionTemplateByTitle(@PathVariable String title) {
+	public ResponseEntity<TransactionTemplate> getByTitle(@PathVariable String title) {
 		return transactionTemplateService.getByTitle(title)
 				.map(transactionTemplate -> new ResponseEntity<>(transactionTemplate, HttpStatus.OK))
 				.orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));

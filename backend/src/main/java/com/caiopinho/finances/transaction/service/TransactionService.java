@@ -1,52 +1,58 @@
 package com.caiopinho.finances.transaction.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.caiopinho.finances.category.service.CategoryService;
 import com.caiopinho.finances.transaction.model.Transaction;
 import com.caiopinho.finances.transaction.repository.TransactionRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class TransactionService {
-
 	private final TransactionRepository transactionRepository;
 
+	private final CategoryService categoryService;
+	private final TransactionTemplateService templateService;
+
 	@Autowired
-	public TransactionService(TransactionRepository transactionRepository) {
+	public TransactionService(TransactionRepository transactionRepository, CategoryService categoryService, TransactionTemplateService templateService) {
 		this.transactionRepository = transactionRepository;
+		this.categoryService = categoryService;
+		this.templateService = templateService;
 	}
 
-	public List<Transaction> getAllTransactions() {
-		return transactionRepository.findAll();
-	}
-
-	public Optional<Transaction> getTransactionById(UUID id) {
-		return transactionRepository.findById(id);
-	}
-
-	public Transaction createTransaction(Transaction transaction) {
+	public Transaction create(Transaction transaction) {
 		return transactionRepository.save(transaction);
 	}
 
-	public Transaction updateTransaction(UUID id, Transaction transactionDetails) {
+	@Transactional
+	public List<Transaction> saveAll(List<Transaction> transactions, Long userId) {
+		List<Transaction> existingTransaction = transactions.stream()
+				.filter(tx -> !transactionRepository.existsById(tx.getId()))
+				.toList();
+
+		transactionRepository.saveAll(existingTransaction);
+
+		categoryService.updateCategoriesForTransactions(transactions, userId);
+		templateService.updateTemplatesForTransactions(transactions, userId);
+
+		return transactions;
+	}
+
+	public Transaction update(UUID id, Transaction transactionDetails) {
 		return transactionRepository.findById(id)
 				.map(transaction -> {
-					transaction.setAmount(transactionDetails.getAmount());
-					transaction.setDate(transactionDetails.getDate());
-					transaction.setTitle(transactionDetails.getTitle());
-					transaction.setDescription(transactionDetails.getDescription());
-					transaction.setIsDefault(transactionDetails.getIsDefault());
-					transaction.setCategory(transactionDetails.getCategory());
-					transaction.setUserId(transactionDetails.getUserId());
+					transaction.overrideWith(transactionDetails);
 					return transactionRepository.save(transaction);
 				}).orElseThrow(() -> new RuntimeException("Transaction not found with id " + id));
 	}
 
-	public void deleteTransaction(UUID id) {
+	public void delete(UUID id) {
 		if (!transactionRepository.existsById(id)) {
 			throw new RuntimeException("Transaction not found with id " + id);
 		}
@@ -72,4 +78,5 @@ public class TransactionService {
         return transactionRepository.findByDateBetween(startDate, endDate);
         */
 	}
+
 }
