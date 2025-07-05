@@ -76,6 +76,10 @@ public class CsvParserService {
 			}
 		}
 
+		if (csvType.equals(CsvType.NUBANK_CREDIT_EXTRACT)) {
+			amount = amount.negate();
+		}
+
 		if (csvType.getBlacklistedTitles() != null && title != null && Arrays.asList(csvType.getBlacklistedTitles()).contains(title)) {
 			return null;
 		}

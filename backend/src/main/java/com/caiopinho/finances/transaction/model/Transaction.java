@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import com.caiopinho.finances.category.model.Category;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -58,6 +59,7 @@ public class Transaction {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "co_category")
+	@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 	private Category category;
 
 	@Column(name = "co_user", nullable = false)

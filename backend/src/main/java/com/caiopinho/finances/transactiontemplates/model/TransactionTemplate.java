@@ -1,4 +1,4 @@
-package com.caiopinho.finances.transaction.model;
+package com.caiopinho.finances.transactiontemplates.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,4 +30,7 @@ public class TransactionTemplate {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "co_category")
 	private Category category;
+
+	@Column(name = "co_category", updatable = false, insertable = false)
+	private Long categoryId;
 }

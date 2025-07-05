@@ -9,6 +9,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +26,7 @@ import com.caiopinho.finances.transaction.model.Transaction;
 import com.caiopinho.finances.transaction.service.CsvParserService;
 import com.caiopinho.finances.transaction.service.TransactionService;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/transactions")
 public class TransactionController {
@@ -48,6 +50,16 @@ public class TransactionController {
 	public ResponseEntity<Transaction> update(@PathVariable UUID id, @RequestBody Transaction transactionDetails) {
 		try {
 			Transaction updatedTransaction = transactionService.update(id, transactionDetails);
+			return new ResponseEntity<>(updatedTransaction, HttpStatus.OK);
+		} catch (RuntimeException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+	}
+
+	@PutMapping("/{id}/{categoryId}")
+	public ResponseEntity<Transaction> updateCategory(@PathVariable UUID id, @PathVariable Long categoryId) {
+		try {
+			Transaction updatedTransaction = transactionService.updateCategory(id, categoryId);
 			return new ResponseEntity<>(updatedTransaction, HttpStatus.OK);
 		} catch (RuntimeException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);

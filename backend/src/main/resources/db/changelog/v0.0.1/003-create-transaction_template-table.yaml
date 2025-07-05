@@ -18,8 +18,6 @@ databaseChangeLog:
               - column:
                   name: co_category
                   type: TINYINT
-                  constraints:
-                    nullable: false
         - addForeignKeyConstraint:
             baseTableName: tb_transaction_template
             baseColumnNames: co_category

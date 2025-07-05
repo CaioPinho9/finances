@@ -1,4 +1,4 @@
-package com.caiopinho.finances.transaction.service;
+package com.caiopinho.finances.transactiontemplates.services;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,18 +6,22 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.caiopinho.finances.category.model.Category;
+import com.caiopinho.finances.category.service.CategoryService;
 import com.caiopinho.finances.transaction.model.Transaction;
-import com.caiopinho.finances.transaction.model.TransactionTemplate;
-import com.caiopinho.finances.transaction.repository.TransactionTemplateRepository;
+import com.caiopinho.finances.transactiontemplates.model.TransactionTemplate;
+import com.caiopinho.finances.transactiontemplates.repository.TransactionTemplateRepository;
 
 @Service
 public class TransactionTemplateService {
 
 	private final TransactionTemplateRepository transactionTemplateRepository;
+	private final CategoryService categoryService;
 
 	@Autowired
-	public TransactionTemplateService(TransactionTemplateRepository transactionTemplateRepository) {
+	public TransactionTemplateService(TransactionTemplateRepository transactionTemplateRepository, CategoryService categoryService) {
 		this.transactionTemplateRepository = transactionTemplateRepository;
+		this.categoryService = categoryService;
 	}
 
 	public List<TransactionTemplate> getAll() {
@@ -29,6 +33,16 @@ public class TransactionTemplateService {
 	}
 
 	public TransactionTemplate create(TransactionTemplate transactionTemplate) {
+		Long categoryId = transactionTemplate.getCategoryId();
+		if (categoryId != null){
+			Optional<Category> category = categoryService.getById(categoryId);
+
+			if (!category.isPresent()) {
+				throw new RuntimeException("Category not found with id " + categoryId);
+			}
+
+			transactionTemplate.setCategory(category.get());
+		}
 		return transactionTemplateRepository.save(transactionTemplate);
 	}
 

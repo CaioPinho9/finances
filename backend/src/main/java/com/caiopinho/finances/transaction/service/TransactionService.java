@@ -1,13 +1,17 @@
 package com.caiopinho.finances.transaction.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.caiopinho.finances.category.model.Category;
+import com.caiopinho.finances.category.service.CategoryService;
 import com.caiopinho.finances.transaction.model.Transaction;
 import com.caiopinho.finances.transaction.repository.TransactionRepository;
+import com.caiopinho.finances.transactiontemplates.services.TransactionTemplateService;
 
 import jakarta.transaction.Transactional;
 
@@ -15,11 +19,13 @@ import jakarta.transaction.Transactional;
 public class TransactionService {
 	private final TransactionRepository transactionRepository;
 
+	private final CategoryService categoryService;
 	private final TransactionTemplateService templateService;
 
 	@Autowired
-	public TransactionService(TransactionRepository transactionRepository, TransactionTemplateService templateService) {
+	public TransactionService(TransactionRepository transactionRepository, CategoryService categoryService, TransactionTemplateService templateService) {
 		this.transactionRepository = transactionRepository;
+		this.categoryService = categoryService;
 		this.templateService = templateService;
 	}
 
@@ -55,24 +61,24 @@ public class TransactionService {
 		transactionRepository.deleteById(id);
 	}
 
-	/**
-	 * Retrieves transactions for a specific month and year.
-	 *
-	 * @param year The year (e.g., 2023).
-	 * @param month The month (1-12).
-	 * @return A list of transactions for the specified month.
-	 */
 	public List<Transaction> getTransactionsByMonth(int year, int month) {
 		// Using the custom query defined in the repository
 		return transactionRepository.findByMonthAndYear(year, month);
-
-        /*
-        // Alternative: Using findByDateBetween for a more robust date range query
-        YearMonth yearMonth = YearMonth.of(year, month);
-        LocalDate startDate = yearMonth.atDay(1);
-        LocalDate endDate = yearMonth.atEndOfMonth();
-        return transactionRepository.findByDateBetween(startDate, endDate);
-        */
 	}
 
+	public Transaction updateCategory(UUID id, Long categoryId) {
+		Optional<Category> category = categoryService.getById(categoryId);
+
+		if (category.isEmpty()) {
+			throw new RuntimeException("Category not found with id " + categoryId);
+		}
+
+		Transaction transaction = transactionRepository.findById(id)
+				.map(tx -> {
+					tx.setCategory(category.get());
+					return transactionRepository.save(tx);
+				}).orElseThrow(() -> new RuntimeException("Transaction not found with id " + id));
+
+		return transactionRepository.save(transaction);
+	}
 }
