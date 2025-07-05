@@ -128,7 +128,7 @@ const TransactionsView: React.FC = () => {
   const runQueryColumn = useMemo<TableColumn<Transaction>>(
     () => ({
       key: "run",
-      name: "",
+      name: "Actions",
       render: (_value, row) => (
         <Button
           size="sm"
@@ -148,7 +148,7 @@ const TransactionsView: React.FC = () => {
             }
           }
         >
-          Run
+          Set default
         </Button >
       ),
     }),
@@ -233,12 +233,12 @@ const TransactionsView: React.FC = () => {
   );
 
   const expenseColumns = useMemo(
-    () => [...baseColumns, runQueryColumn, expenseCategoryColumn],
+    () => [...baseColumns, expenseCategoryColumn, runQueryColumn],
     [baseColumns, expenseCategoryColumn, runQueryColumn]
   );
 
   const incomeColumns = useMemo(
-    () => [...baseColumns, runQueryColumn, incomeCategoryColumn],
+    () => [...baseColumns, incomeCategoryColumn, runQueryColumn],
     [baseColumns, incomeCategoryColumn, runQueryColumn]
   );
 
