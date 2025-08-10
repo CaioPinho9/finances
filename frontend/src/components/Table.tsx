@@ -5,6 +5,7 @@ import {
     Button,
 } from 'react-bootstrap';
 import type { TableColumn } from '../types/types';
+import moment from 'moment';
 
 export type FormControlElement = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
 
@@ -40,6 +41,7 @@ const Table = <
 
     const sortedData = useMemo(() => {
         if (!sortColumn) return data;
+
         return [...data].sort((a, b) => {
             const aVal = a[sortColumn];
             const bVal = b[sortColumn];
@@ -66,6 +68,9 @@ const Table = <
     const handleSort = (columnKey: keyof T, sortable?: boolean) => {
         if (!sortable) return;
         if (sortColumn === columnKey) {
+            if (sortDirection === 'desc') {
+                setSortColumn(null);
+            }
             setSortDirection(d => (d === 'asc' ? 'desc' : 'asc'));
         } else {
             setSortColumn(columnKey);
@@ -103,6 +108,11 @@ const Table = <
                     case 'number': {
                         const n = parseFloat(newValue);
                         parsed = (isNaN(n) ? row[colKey] : n) as T[keyof T];
+                        break;
+                    }
+                    case 'amount': {
+                        const currencyValue = parseFloat(newValue.replace(/[^0-9.-]+/g, ""));
+                        parsed = !isNaN(currencyValue) ? (currencyValue as unknown as T[keyof T]) : row[colKey];
                         break;
                     }
                     case 'date': {
@@ -145,6 +155,7 @@ const Table = <
             switch (column.type) {
                 case 'text':
                 case 'number':
+                case 'amount':
                 case 'date':
                     return <Form.Control type={column.type} {...commonProps} />;
                 case 'select':
@@ -165,6 +176,34 @@ const Table = <
                 default:
                     return String(raw);
             }
+        }
+
+        if (column.type === 'date') {
+            return <span>{moment(raw as string | number).format('DD/MM/YYYY')}</span>;
+        }
+
+        if (column.type === 'number') {
+            if (raw === null) {
+                return <span></span>;
+            }
+            return <span>{new Intl.NumberFormat('pt-BR').format(Number(raw) || 0)}</span>;
+        }
+
+        if (column.type === 'text') {
+            if (raw === null) {
+                return <span></span>;
+            }
+        }
+
+        if (column.type === 'amount') {
+            return (
+                <span>
+                    {new Intl.NumberFormat('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL',
+                    }).format(Math.abs(Number(raw)))}
+                </span>
+            );
         }
 
         if (column.render) {
@@ -188,7 +227,7 @@ const Table = <
                             {sortColumn === col.key && (sortDirection === 'asc' ? ' ▲' : ' ▼')}
                         </th>
                     ))}
-                    {(onUpdateRow || onDeleteRow) && <th>Actions</th>}
+                    {(onUpdateRow || onDeleteRow) && <th>Ações</th>}
                 </tr>
             </thead>
             <tbody>
@@ -220,7 +259,7 @@ const Table = <
                                         size="sm"
                                         onClick={() => onDeleteRow(row[idKey] as T[K])}
                                     >
-                                        Delete
+                                        Deletar
                                     </Button>
                                 )}
                             </td>

@@ -27,7 +27,7 @@ export interface TransactionTemplate {
     // Add other fields as needed
 }
 
-export type ColumnType = 'text' | 'number' | 'date' | 'select'; // Extend as needed
+export type ColumnType = 'text' | 'number' | 'amount' | 'date' | 'select'; // Extend as needed
 
 export interface TableColumn<T> {
     key: keyof T;

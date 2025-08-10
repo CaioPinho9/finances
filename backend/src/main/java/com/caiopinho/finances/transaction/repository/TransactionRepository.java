@@ -18,6 +18,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
 			    SELECT t FROM Transaction t
 			    WHERE EXTRACT(YEAR FROM t.date) = :year
 			    AND EXTRACT(MONTH FROM t.date) = :month
+			    ORDER BY t.date ASC, t.id ASC
 			""")
 	List<Transaction> findByMonthAndYear(@Param("year") int year, @Param("month") int month);
 

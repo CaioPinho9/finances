@@ -25,11 +25,8 @@ const TransactionsView: React.FC = () => {
     try {
       const response = await transactionsApi.getByMonth(currentYear, currentMonth);
       const data = response.data;
-      const sortedByDate = data.sort((a, b) =>
-        new Date(b.date).getTime() - new Date(a.date).getTime()
-      );
-      setExpenses(sortedByDate.filter((t) => t.amount < 0));
-      setIncome(sortedByDate.filter((t) => t.amount >= 0));
+      setExpenses(data.filter((t) => t.amount < 0));
+      setIncome(data.filter((t) => t.amount >= 0));
     } catch {
       setError("Failed to fetch transactions.");
     } finally {
@@ -115,12 +112,12 @@ const TransactionsView: React.FC = () => {
 
   const baseColumns = useMemo<TableColumn<Transaction>[]>(
     () => [
-      { key: "date", name: "Date", type: "date", sortable: true, editable: true },
-      { key: "title", name: "Title", type: "text", sortable: true, editable: true },
-      { key: "amount", name: "Amount", type: "number", sortable: true, editable: true },
-      { key: "parcelaAtual", name: "Current Parcel", type: "number", sortable: false, editable: true },
-      { key: "parcelaTotal", name: "Total Parcels", type: "number", sortable: false, editable: true },
-      { key: "description", name: "Description", type: "text", sortable: false, editable: true },
+      { key: "date", name: "Data", type: "date", sortable: true, editable: true },
+      { key: "title", name: "Título", type: "text", sortable: true, editable: true },
+      { key: "amount", name: "Valor", type: "amount", sortable: true, editable: true },
+      { key: "parcelaAtual", name: "Parcela Atual", type: "number", sortable: false, editable: true },
+      { key: "parcelaTotal", name: "Total Parcelas", type: "number", sortable: false, editable: true },
+      { key: "description", name: "Descrição", type: "text", sortable: false, editable: true },
     ],
     []
   );
@@ -128,7 +125,7 @@ const TransactionsView: React.FC = () => {
   const runQueryColumn = useMemo<TableColumn<Transaction>>(
     () => ({
       key: "run",
-      name: "Actions",
+      name: "Ações",
       render: (_value, row) => (
         <Button
           size="sm"
@@ -158,7 +155,7 @@ const TransactionsView: React.FC = () => {
   const expenseCategoryColumn = useMemo<TableColumn<Transaction>>(
     () => ({
       key: "category",
-      name: "Category",
+      name: "Categoria",
       type: "select",
       sortable: true,
       editable: false,
@@ -191,13 +188,13 @@ const TransactionsView: React.FC = () => {
         );
       },
     }),
-    [expenseCategoryOptions]
+    [expenseCategoryOptions, fetchTransactions]
   );
 
   const incomeCategoryColumn = useMemo<TableColumn<Transaction>>(
     () => ({
       key: "category",
-      name: "Category",
+      name: "Categoria",
       type: "select",
       editable: false,
       render: (value, row) => {
@@ -229,7 +226,7 @@ const TransactionsView: React.FC = () => {
         );
       },
     }),
-    [incomeCategoryOptions]
+    [fetchTransactions, incomeCategoryOptions]
   );
 
   const expenseColumns = useMemo(
@@ -244,13 +241,13 @@ const TransactionsView: React.FC = () => {
 
   return (
     <div>
-      <h2 className="mb-4">Transactions</h2>
+      <h2 className="mb-4">Transações</h2>
       <UploadCsv userId={userId} onUploadSuccess={fetchTransactions} />
 
       <Row className="mb-3">
         <Col xs={6}>
           <Form.Group controlId="selectYear">
-            <Form.Label>Year</Form.Label>
+            <Form.Label>Ano</Form.Label>
             <Form.Control as="select" name="year" value={currentYear} onChange={handleDateChange}>
               {[...Array(5)].map((_, i) => {
                 const y = new Date().getFullYear() - 2 + i;
@@ -261,7 +258,7 @@ const TransactionsView: React.FC = () => {
         </Col>
         <Col xs={6}>
           <Form.Group controlId="selectMonth">
-            <Form.Label>Month</Form.Label>
+            <Form.Label>Mês</Form.Label>
             <Form.Control as="select" name="month" value={currentMonth} onChange={handleDateChange}>
               {Array.from({ length: 12 }, (_, i) => (
                 <option key={i + 1} value={i + 1}>
@@ -276,9 +273,9 @@ const TransactionsView: React.FC = () => {
       {loading && <div className="text-center"><Spinner animation="border" /> Loading…</div>}
       {error && <Alert variant="danger">{error}</Alert>}
 
-      <h3 className="mt-4">Expenses</h3>
+      <h3 className="mt-4">Despesas</h3>
       {!loading && expenses.length === 0 && !error ? (
-        <Alert variant="info">No expenses this month.</Alert>
+        <Alert variant="info">Nenhuma despesa este mês.</Alert>
       ) : (
         <Table
           data={expenses}
@@ -291,9 +288,9 @@ const TransactionsView: React.FC = () => {
         />
       )}
 
-      <h3 className="mt-5">Income</h3>
+      <h3 className="mt-5">Receitas</h3>
       {!loading && income.length === 0 && !error ? (
-        <Alert variant="info">No income this month.</Alert>
+        <Alert variant="info">Nenhuma receita este mês.</Alert>
       ) : (
         <Table
           data={income}

@@ -40,7 +40,7 @@ const NewTransactionRow: React.FC<Props> = ({ onAdd, categories }) => {
   const handleAdd = () => {
     onAdd(newTx);
     setNewTx({
-      date: moment().format('YYYY-MM-DD'),
+      date: moment().format('DD/MM/YYYY'),
       title: '',
       amount: 0,
       description: '',
@@ -111,7 +111,7 @@ const NewTransactionRow: React.FC<Props> = ({ onAdd, categories }) => {
         onChange={handleChange}
       />
       <Button variant="success" onClick={handleAdd}>
-        Add
+        Adicionar
       </Button>
     </InputGroup>
   );
