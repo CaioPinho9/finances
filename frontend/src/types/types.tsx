@@ -44,3 +44,20 @@ export enum CsvType {
     NUBANK_EXTRACT = 'NUBANK_EXTRACT',
     NUBANK_CREDIT_EXTRACT = 'NUBANK_CREDIT_EXTRACT',
 }
+
+
+export interface CategoryEntry {
+  category: Category | null; // null => "Sem categoria"
+  total: number;
+}
+
+export interface MonthSummary {
+  month: string | null; // "1".."12"
+  year: string | null;  // "2025"
+  totalIncome: number;
+  totalExpense: number;
+  incomeByCategory: Record<string, number> | CategoryEntry[];
+  expenseByCategory: Record<string, number> | CategoryEntry[];
+  startDate?: string;
+  endDate?: string;
+}

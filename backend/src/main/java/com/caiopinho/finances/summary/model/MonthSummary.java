@@ -1,4 +1,4 @@
-package com.caiopinho.finances.transaction.model;
+package com.caiopinho.finances.summary.model;
 
 import java.util.Map;
 
@@ -16,7 +16,6 @@ public class MonthSummary {
 	private String year;
 	private Double totalIncome;
 	private Double totalExpense;
-
 	private Map<Category, Double> incomeByCategory;
 	private Map<Category, Double> expenseByCategory;
 }

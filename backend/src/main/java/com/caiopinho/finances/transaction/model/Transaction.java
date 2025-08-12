@@ -65,14 +65,14 @@ public class Transaction {
 	@Column(name = "co_user", nullable = false)
 	private Long userId;
 
-	public void overrideWith(Transaction transactionDetails) {
-		this.amount = transactionDetails.getAmount();
-		this.date = transactionDetails.getDate();
-		this.title = transactionDetails.getTitle();
-		this.parcelaAtual = transactionDetails.getParcelaAtual();
-		this.parcelaTotal = transactionDetails.getParcelaTotal();
-		this.description = transactionDetails.getDescription();
-		this.category = transactionDetails.getCategory();
-		this.userId = transactionDetails.getUserId();
+	public void overrideWith(Transaction transaction) {
+		this.amount = transaction.getAmount();
+		this.date = transaction.getDate();
+		this.title = transaction.getTitle();
+		this.parcelaAtual = transaction.getParcelaAtual();
+		this.parcelaTotal = transaction.getParcelaTotal();
+		this.description = transaction.getDescription();
+		this.category = transaction.getCategory();
+		this.userId = transaction.getUserId();
 	}
 }
