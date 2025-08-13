@@ -44,8 +44,9 @@ public class SummaryController {
 	private ResponseEntity<List<MonthSummary>> getMonthlySummariesResponse(String start, String end) {
 		try {
 			var summaries = summaryService.getMonthlySummariesInRange(
-					LocalDate.parse(start),
-					LocalDate.parse(end));
+					LocalDate.parse(start.length() == 7 ? start + "-01" : start),
+					LocalDate.parse(end.length() == 7 ? end + "-01" : end)
+			);
 			return new ResponseEntity<>(summaries, HttpStatus.OK);
 		} catch (Exception e) {
 			err.println("Error fetching monthly summaries: " + e.getMessage());

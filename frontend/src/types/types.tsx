@@ -47,7 +47,7 @@ export enum CsvType {
 
 
 export interface CategoryEntry {
-  category: Category | null; // null => "Sem categoria"
+  category: Omit<Category, 'isExpense' | 'description'> | null; // null => "Sem categoria"
   total: number;
 }
 

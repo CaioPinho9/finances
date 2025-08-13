@@ -16,6 +16,6 @@ public class MonthSummary {
 	private String year;
 	private Double totalIncome;
 	private Double totalExpense;
-	private Map<Category, Double> incomeByCategory;
-	private Map<Category, Double> expenseByCategory;
+	private Map<Long, Double> incomeByCategory;
+	private Map<Long, Double> expenseByCategory;
 }

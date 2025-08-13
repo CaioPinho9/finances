@@ -39,15 +39,17 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
 	List<MonthlyTotal> findMonthlyTotalsInRange(@Param("start") LocalDate start, @Param("end") LocalDate end);
 
 	@Query("""
-			    SELECT EXTRACT(YEAR FROM t.date) AS year,
-			        EXTRACT(MONTH FROM t.date) AS month,
-			        t.category AS category,
-			        COALESCE(SUM(CASE WHEN t.amount > 0 THEN t.amount ELSE 0 END), 0) AS income,
-			        COALESCE(SUM(CASE WHEN t.amount < 0 THEN ABS(t.amount) ELSE 0 END), 0) AS expense
-			    FROM Transaction t
-			    WHERE t.date BETWEEN :start AND :end
-			    GROUP BY EXTRACT(YEAR FROM t.date), EXTRACT(MONTH FROM t.date), t.category
-			    ORDER BY EXTRACT(YEAR FROM t.date), EXTRACT(MONTH FROM t.date), t.category.id
+			SELECT EXTRACT(YEAR FROM t.date) AS year,
+			  EXTRACT(MONTH FROM t.date) AS month,
+			  c.id AS category,
+			  COALESCE(SUM(CASE WHEN t.amount > 0 THEN t.amount ELSE 0 END), 0) AS income,
+			  COALESCE(SUM(CASE WHEN t.amount < 0 THEN ABS(t.amount) ELSE 0 END), 0) AS expense
+			FROM Transaction t
+			LEFT JOIN t.category c
+			WHERE t.date BETWEEN :start AND :end
+			GROUP BY EXTRACT(YEAR FROM t.date), EXTRACT(MONTH FROM t.date), c
+			ORDER BY EXTRACT(YEAR FROM t.date), EXTRACT(MONTH FROM t.date), c.id
+			
 			""")
 	List<MonthlyCategoryIncomeExpense> findMonthlyIncomeExpenseByCategoryInRange(
 			@Param("start") LocalDate start,

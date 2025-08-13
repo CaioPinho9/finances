@@ -4,14 +4,16 @@ import type { Category } from '../types/types';
 
 interface CategoryNewRowProps {
     onAdd: (newRow: Partial<Category>) => void;
-    isExpense?: boolean; // Optional prop to set default category type
+    isExpense?: boolean; 
 }
 
-export function CategoryNewRow({ isExpense, onAdd }: CategoryNewRowProps) {
+export function CategoryNewRow(props: Readonly<CategoryNewRowProps>) {
+    const { onAdd, isExpense } = props;
+
     const [newCategory, setNewCategory] = useState<Partial<Category>>({
         name: '',
         description: '',
-        isExpense: isExpense !== undefined ? isExpense : false,
+        isExpense: isExpense ?? false,
     });
 
     const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {

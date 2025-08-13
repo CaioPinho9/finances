@@ -48,8 +48,8 @@ public class SummaryService {
 		for (var row : transactionRepository.findMonthlyIncomeExpenseByCategoryInRange(start, end)) {
 			String key = key(row.getYear(), row.getMonth());
 			MonthSummary ms = byKey.computeIfAbsent(key, k -> empty(row.getYear(), row.getMonth()));
-			ms.getIncomeByCategory().put(row.getCategory(), toD(row.getIncome()));
-			ms.getExpenseByCategory().put(row.getCategory(), toD(row.getExpense()));
+			ms.getIncomeByCategory().put(row.getCategoryId(), toD(row.getIncome()));
+			ms.getExpenseByCategory().put(row.getCategoryId(), toD(row.getExpense()));
 		}
 
 		// 3) Return sorted by (year, month)
