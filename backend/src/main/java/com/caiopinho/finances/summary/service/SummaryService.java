@@ -1,5 +1,7 @@
 package com.caiopinho.finances.summary.service;
 
+import static com.caiopinho.finances.category.enums.CategoryEnum.OTHER_CATEGORIES;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Comparator;
@@ -10,6 +12,9 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.caiopinho.finances.category.enums.CategoryEnum;
+import com.caiopinho.finances.category.model.Category;
+import com.caiopinho.finances.category.service.CategoryService;
 import com.caiopinho.finances.summary.model.MonthSummary;
 import com.caiopinho.finances.transaction.repository.TransactionRepository;
 
@@ -18,9 +23,13 @@ public class SummaryService {
 
 	private final TransactionRepository transactionRepository;
 
+	private final List<Category> categories;
+
 	@Autowired
-	public SummaryService(TransactionRepository transactionRepository) {
+	public SummaryService(TransactionRepository transactionRepository, CategoryService categoryService) {
 		this.transactionRepository = transactionRepository;
+
+		this.categories = categoryService.getAll();
 	}
 
 	public List<MonthSummary> getMonthlySummariesInRange(LocalDate start, LocalDate end) {
@@ -47,9 +56,25 @@ public class SummaryService {
 		// 2) Fill income-by-category
 		for (var row : transactionRepository.findMonthlyIncomeExpenseByCategoryInRange(start, end)) {
 			String key = key(row.getYear(), row.getMonth());
-			MonthSummary ms = byKey.computeIfAbsent(key, k -> empty(row.getYear(), row.getMonth()));
-			ms.getIncomeByCategory().put(row.getCategoryId(), toD(row.getIncome()));
-			ms.getExpenseByCategory().put(row.getCategoryId(), toD(row.getExpense()));
+			MonthSummary monthSummary = byKey.computeIfAbsent(key, k -> empty(row.getYear(), row.getMonth()));
+			Long categoryId = row.getCategoryId();
+			if (categoryId == null) {
+				categoryId = OTHER_CATEGORIES.stream()
+						.filter(c -> c.getIsExpense() == row.getExpense().signum() > 0)
+						.map(CategoryEnum::getId)
+						.findFirst()
+						.orElseThrow(() -> new RuntimeException("No category found for income/expense type"));
+			}
+
+			Long finalCategoryId = categoryId;
+			String categoryName = categories.stream()
+					.filter(c -> c.getId().equals(finalCategoryId))
+					.map(Category::getName)
+					.findFirst()
+					.orElse("Desconhecido");
+
+			monthSummary.getIncomeByCategory().put(categoryName, toD(row.getIncome()));
+			monthSummary.getExpenseByCategory().put(categoryName, toD(row.getExpense()));
 		}
 
 		// 3) Return sorted by (year, month)
