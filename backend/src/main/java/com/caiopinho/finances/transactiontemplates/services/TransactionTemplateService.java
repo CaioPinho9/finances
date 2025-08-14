@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.caiopinho.finances.category.model.Category;
 import com.caiopinho.finances.category.service.CategoryService;
 import com.caiopinho.finances.transaction.model.Transaction;
+import com.caiopinho.finances.transaction.repository.TransactionRepository;
 import com.caiopinho.finances.transactiontemplates.model.TransactionTemplate;
 import com.caiopinho.finances.transactiontemplates.repository.TransactionTemplateRepository;
 
@@ -17,11 +18,13 @@ public class TransactionTemplateService {
 
 	private final TransactionTemplateRepository transactionTemplateRepository;
 	private final CategoryService categoryService;
+	private final TransactionRepository transactionRepository;
 
 	@Autowired
-	public TransactionTemplateService(TransactionTemplateRepository transactionTemplateRepository, CategoryService categoryService) {
+	public TransactionTemplateService(TransactionTemplateRepository transactionTemplateRepository, CategoryService categoryService, TransactionRepository transactionRepository) {
 		this.transactionTemplateRepository = transactionTemplateRepository;
 		this.categoryService = categoryService;
+		this.transactionRepository = transactionRepository;
 	}
 
 	public List<TransactionTemplate> getAll() {
@@ -34,15 +37,21 @@ public class TransactionTemplateService {
 
 	public TransactionTemplate create(TransactionTemplate transactionTemplate) {
 		Long categoryId = transactionTemplate.getCategoryId();
-		if (categoryId != null){
+
+		if (categoryId != null) {
 			Optional<Category> category = categoryService.getById(categoryId);
 
-			if (!category.isPresent()) {
+			if (category.isEmpty()) {
 				throw new RuntimeException("Category not found with id " + categoryId);
 			}
 
 			transactionTemplate.setCategory(category.get());
 		}
+		transactionRepository.updateDescriptionCategoryByTemplateTitle(
+				transactionTemplate.getTitle(),
+				transactionTemplate.getDescription(),
+				categoryId
+		);
 		return transactionTemplateRepository.save(transactionTemplate);
 	}
 
