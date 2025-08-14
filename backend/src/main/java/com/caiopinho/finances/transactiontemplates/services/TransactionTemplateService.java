@@ -37,9 +37,10 @@ public class TransactionTemplateService {
 
 	public TransactionTemplate create(TransactionTemplate transactionTemplate) {
 		Long categoryId = transactionTemplate.getCategoryId();
+		Optional<Category> category = Optional.empty();
 
 		if (categoryId != null) {
-			Optional<Category> category = categoryService.getById(categoryId);
+			category = categoryService.getById(categoryId);
 
 			if (category.isEmpty()) {
 				throw new RuntimeException("Category not found with id " + categoryId);
@@ -50,7 +51,7 @@ public class TransactionTemplateService {
 		transactionRepository.updateDescriptionCategoryByTemplateTitle(
 				transactionTemplate.getTitle(),
 				transactionTemplate.getDescription(),
-				categoryId
+				category.orElse(null)
 		);
 		return transactionTemplateRepository.save(transactionTemplate);
 	}

@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.caiopinho.finances.category.model.Category;
 import com.caiopinho.finances.summary.model.MonthlyCategoryIncomeExpense;
 import com.caiopinho.finances.summary.model.MonthlyTotal;
 import com.caiopinho.finances.transaction.model.Transaction;
@@ -58,14 +59,20 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
 			@Param("end") LocalDate end
 	);
 
+	@Modifying(clearAutomatically = true, flushAutomatically = true)
 	@Transactional
-	@Modifying
 	@Query("""
-			UPDATE Transaction t
-			SET t.description = :description, t.category.id = :categoryId
-			WHERE t.title = :title
-			AND t.description IS NULL
-			AND t.category IS NULL
+			    UPDATE Transaction t
+			       SET t.description = :description,
+			           t.category    = :category
+			     WHERE t.title = :title
+			       AND (t.description IS NULL OR t.description = '')
+			       AND t.category IS NULL
 			""")
-	void updateDescriptionCategoryByTemplateTitle(String title, String description, Long categoryId);
+	void updateDescriptionCategoryByTemplateTitle(
+			@Param("title") String title,
+			@Param("description") String description,
+			@Param("category") Category category
+	);
+
 }
