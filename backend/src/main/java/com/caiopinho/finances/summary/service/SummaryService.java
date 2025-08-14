@@ -41,16 +41,16 @@ public class SummaryService {
 
 		// 1) Base buckets from totals
 		Map<String, MonthSummary> byKey = new LinkedHashMap<>();
-		for (var mt : transactionRepository.findMonthlyTotalsInRange(start, end)) {
-			String key = key(mt.getYear(), mt.getMonth());
-			MonthSummary ms = new MonthSummary();
-			ms.setYear(String.valueOf(mt.getYear()));
-			ms.setMonth(String.valueOf(mt.getMonth()));
-			ms.setTotalIncome(toD(mt.getIncome()));
-			ms.setTotalExpense(toD(mt.getExpense()));
-			ms.setIncomeByCategory(new LinkedHashMap<>());
-			ms.setExpenseByCategory(new LinkedHashMap<>());
-			byKey.put(key, ms);
+		for (var monthlyTotal : transactionRepository.findMonthlyTotalsInRange(start, end)) {
+			String key = key(monthlyTotal.getYear(), monthlyTotal.getMonth());
+			MonthSummary monthSummary = new MonthSummary();
+			monthSummary.setYear(String.valueOf(monthlyTotal.getYear()));
+			monthSummary.setMonth(String.valueOf(monthlyTotal.getMonth()));
+			monthSummary.setTotalIncome(toD(monthlyTotal.getIncome()));
+			monthSummary.setTotalExpense(toD(monthlyTotal.getExpense()));
+			monthSummary.setIncomeByCategory(new LinkedHashMap<>());
+			monthSummary.setExpenseByCategory(new LinkedHashMap<>());
+			byKey.put(key, monthSummary);
 		}
 
 		// 2) Fill income-by-category
@@ -73,8 +73,11 @@ public class SummaryService {
 					.findFirst()
 					.orElse("Desconhecido");
 
-			monthSummary.getIncomeByCategory().put(categoryName, toD(row.getIncome()));
-			monthSummary.getExpenseByCategory().put(categoryName, toD(row.getExpense()));
+			if (row.getIncome().signum() > 0) {
+				monthSummary.getIncomeByCategory().merge(categoryName, toD(row.getIncome()), Double::sum);
+			} else {
+				monthSummary.getExpenseByCategory().merge(categoryName, toD(row.getExpense()), Double::sum);
+			}
 		}
 
 		// 3) Return sorted by (year, month)

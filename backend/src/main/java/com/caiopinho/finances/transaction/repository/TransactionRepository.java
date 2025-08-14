@@ -34,22 +34,21 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
 			    FROM Transaction t
 			    WHERE t.date BETWEEN :start AND :end
 			    GROUP BY EXTRACT(YEAR FROM t.date), EXTRACT(MONTH FROM t.date)
-			    ORDER BY EXTRACT(YEAR FROM t.date), EXTRACT(MONTH FROM t.date)
+			    ORDER BY EXTRACT(YEAR FROM t.date) DESC, EXTRACT(MONTH FROM t.date) DESC
 			""")
 	List<MonthlyTotal> findMonthlyTotalsInRange(@Param("start") LocalDate start, @Param("end") LocalDate end);
 
 	@Query("""
 			SELECT EXTRACT(YEAR FROM t.date) AS year,
 			  EXTRACT(MONTH FROM t.date) AS month,
-			  c.id AS category,
+			  c.id AS categoryId,
 			  COALESCE(SUM(CASE WHEN t.amount > 0 THEN t.amount ELSE 0 END), 0) AS income,
 			  COALESCE(SUM(CASE WHEN t.amount < 0 THEN ABS(t.amount) ELSE 0 END), 0) AS expense
 			FROM Transaction t
 			LEFT JOIN t.category c
 			WHERE t.date BETWEEN :start AND :end
 			GROUP BY EXTRACT(YEAR FROM t.date), EXTRACT(MONTH FROM t.date), c
-			ORDER BY EXTRACT(YEAR FROM t.date), EXTRACT(MONTH FROM t.date), c.id
-			
+			ORDER BY EXTRACT(YEAR FROM t.date) DESC, EXTRACT(MONTH FROM t.date) DESC, c.id DESC
 			""")
 	List<MonthlyCategoryIncomeExpense> findMonthlyIncomeExpenseByCategoryInRange(
 			@Param("start") LocalDate start,

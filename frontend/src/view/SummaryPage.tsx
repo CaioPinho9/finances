@@ -26,6 +26,7 @@ export default function SummaryPage() {
             const start = new Date(date + "-01");
             start.setMonth(start.getMonth() - 1);
             const startMonth = toYYYYMM(start);
+
             const data = await fetchSummaryRange(startMonth, date);
             setRows(data);
         } catch (e: unknown) {
@@ -60,7 +61,7 @@ export default function SummaryPage() {
                     <MonthPanel
                         key={`${monthSummary.year}-${monthSummary.month}-${i}`}
                         monthSummary={monthSummary}
-                        defaultOpen={i === 0}
+                        defaultOpen={true}
                     />
                 ))}
             </div>

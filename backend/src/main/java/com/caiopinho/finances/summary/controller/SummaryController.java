@@ -3,6 +3,7 @@ package com.caiopinho.finances.summary.controller;
 import static java.lang.System.err;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,10 +44,15 @@ public class SummaryController {
 
 	private ResponseEntity<List<MonthSummary>> getMonthlySummariesResponse(String start, String end) {
 		try {
-			var summaries = summaryService.getMonthlySummariesInRange(
-					LocalDate.parse(start.length() == 7 ? start + "-01" : start),
-					LocalDate.parse(end.length() == 7 ? end + "-01" : end)
+			var startDate = LocalDate.parse(
+					start.length() == 7 ? start + "-01" : start
 			);
+
+			var endDate = end.length() == 7
+					? YearMonth.parse(end).atEndOfMonth()
+					: LocalDate.parse(end);
+
+			var summaries = summaryService.getMonthlySummariesInRange(startDate, endDate);
 			return new ResponseEntity<>(summaries, HttpStatus.OK);
 		} catch (Exception e) {
 			err.println("Error fetching monthly summaries: " + e.getMessage());
